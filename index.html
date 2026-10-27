@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' data: blob:; connect-src 'self' data: blob:; worker-src 'self' blob:; manifest-src 'self'; form-action 'none'; base-uri 'none'; object-src 'none'">
+<meta name="referrer" content="no-referrer">
+<title>Speed Reader — RSVP Speed Reading, One Word at a Time (English &amp; Arabic) | S3eidat Tools</title>
+<meta name="description" content="Paste any text and read it one word at a time at 100–1000 words per minute. Focus-letter highlight, pauses at punctuation, chunks of 1–3 words, jump by sentence, keyboard controls, and Arabic right-to-left text. Free and private.">
+<meta property="og:title" content="Speed Reader — القراءة السريعة">
+<meta property="og:description" content="Read faster, one word at a time, in English or Arabic. Runs 100% in your browser.">
+<link rel="icon" href="kit/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="kit/kit.css">
+<link rel="stylesheet" href="app.css">
+<script src="kit/kit.js"></script>
+<!--s3:seo-->
+<link rel="canonical" href="https://s3eidat.github.io/speed-reader/">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0d0f12">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="S3eidat Tools">
+<meta property="og:url" content="https://s3eidat.github.io/speed-reader/">
+<meta property="og:image" content="https://s3eidat.github.io/speed-reader/screenshot.png">
+<meta property="og:image:width" content="1280"><meta property="og:image:height" content="800">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Speed Reader — Read faster, one word at a time">
+<meta name="twitter:description" content="Read faster, one word at a time. Free, private and runs 100% in your browser: no sign-up, no uploads.">
+<meta name="twitter:image" content="https://s3eidat.github.io/speed-reader/screenshot.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Speed Reader", "url": "https://s3eidat.github.io/speed-reader/", "description": "Read faster, one word at a time. Free, private and runs 100% in your browser: no sign-up, no uploads.", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "image": "https://s3eidat.github.io/speed-reader/screenshot.png", "author": {"@type": "Person", "name": "s3eidat", "url": "https://github.com/s3eidat"}}</script>
+<!--/s3:seo-->
+</head>
+<body data-tool="speed-reader">
+<main class="s3-main">
+  <section class="s3-hero">
+    <h1>Speed Reader <span class="sr-ar-h" lang="ar" dir="rtl">القراءة السريعة</span></h1>
+    <p>Words flash one at a time in the same spot, with one letter in colour where your eye should land, so you read without moving your eyes. Works with English and Arabic.</p>
+  </section>
+
+  <section class="card sr-reader">
+    <div class="sr-stage" id="stage" tabindex="0" aria-label="Reader. Space to play or pause, arrow keys to move by sentence." role="button">
+      <span class="sr-tick top" aria-hidden="true"></span>
+      <span class="sr-tick bottom" aria-hidden="true"></span>
+      <span class="sr-word" id="word" aria-live="off"></span>
+    </div>
+    <div class="sr-progress" id="bar" role="slider" tabindex="0" aria-label="Position in text" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="fill"></i></div>
+    <div class="row between sr-meta">
+      <span class="faint mono" id="pos">0 / 0</span>
+      <span class="faint" id="left"></span>
+    </div>
+    <p class="sr-context" id="context" dir="auto"></p>
+
+    <div class="row sr-controls">
+      <button class="btn icon" id="back" aria-label="Previous sentence" title="Previous sentence (←)"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 20 9 12l10-8v16Z"/><path d="M5 19V5"/></svg></button>
+      <button class="btn primary big sr-play" id="play" aria-label="Play"><svg class="i" id="play-i"><use href="#i-play"/></svg><span id="play-l">Play</span></button>
+      <button class="btn icon" id="fwd" aria-label="Next sentence" title="Next sentence (→)"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 4 10 8-10 8V4Z"/><path d="M19 5v14"/></svg></button>
+      <button class="btn ghost small" id="restart" title="Back to the start (Home)"><svg class="i"><use href="#i-refresh"/></svg>Restart</button>
+    </div>
+
+    <div class="sr-settings">
+      <label class="field sr-wpm">Speed <span class="sr-sub" lang="ar">السرعة</span>
+        <span class="row"><input type="range" id="wpm" min="100" max="1000" step="10" value="300" aria-label="Words per minute"><b class="mono" id="wpm-v">300 wpm</b></span>
+      </label>
+      <div class="field">Words at a time <span class="sr-sub" lang="ar">كلمات في كل مرة</span>
+        <div class="seg" id="chunk" role="group" aria-label="Words at a time">
+          <button data-v="1" aria-pressed="true">1</button><button data-v="2" aria-pressed="false">2</button><button data-v="3" aria-pressed="false">3</button>
+        </div>
+      </div>
+      <label class="check sr-pausechk"><input type="checkbox" id="pause" checked> <span>Pause at punctuation <bdi lang="ar" class="sr-sub">توقف عند علامات الترقيم</bdi></span></label>
+    </div>
+    <p class="faint sr-keys"><kbd>Space</kbd> play/pause · <kbd>←</kbd> <kbd>→</kbd> sentence · <kbd>↑</kbd> <kbd>↓</kbd> speed · <kbd>Home</kbd> restart</p>
+  </section>
+
+  <section class="card mt">
+    <div class="row between">
+      <h2>Your text <small lang="ar">النص</small></h2>
+      <div class="row">
+        <button class="btn ghost small" id="s-en">English sample</button>
+        <button class="btn ghost small" id="s-ar" lang="ar">نص عربي</button>
+        <label class="btn ghost small" id="open">Open .txt<input type="file" accept=".txt,text/plain,.md" hidden></label>
+        <button class="btn ghost small" id="clear" aria-label="Clear text"><svg class="i"><use href="#i-trash"/></svg></button>
+      </div>
+    </div>
+    <label for="text" class="sr">Text to read</label>
+    <textarea class="textarea prose sr-text mt" id="text" dir="auto" placeholder="Paste an article, a chapter or your notes here · الصق النص هنا"></textarea>
+    <div class="stats mt" id="stats"></div>
+  </section>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
